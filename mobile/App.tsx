@@ -1,6 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useFonts as useExpoFonts } from "expo-font";
 import {
@@ -123,7 +129,7 @@ export default function App() {
   }
 
   return (
-    <View style={styles.appRoot}>
+    <SafeAreaView style={styles.appRoot}>
       {appToast ? (
         <View style={styles.appToast}>
           <Feather name="check-circle" size={16} color={colors.surface} />
@@ -168,13 +174,14 @@ export default function App() {
         />
       )}
       <StatusBar style="dark" />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   appRoot: {
     flex: 1,
+    backgroundColor: colors.background,
   },
   appToast: {
     position: "absolute",

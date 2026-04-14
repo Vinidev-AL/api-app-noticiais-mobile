@@ -47,9 +47,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     width: "100%",
-    maxWidth: 375,
-    alignSelf: "center",
-    ...(Platform.OS === "web" ? { height: "100%" as const } : null),
+    ...(Platform.OS === "web"
+      ? {
+          maxWidth: 375,
+          alignSelf: "center" as const,
+          height: "100%" as const,
+        }
+      : null),
   },
   scrollArea: {
     flex: 1,
