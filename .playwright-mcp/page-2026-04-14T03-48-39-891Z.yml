@@ -1,0 +1,47 @@
+- generic [ref=e23]:
+  - generic [ref=e131]:
+    - banner [ref=e132]:
+      - generic [ref=e134]:
+        - button [ref=e135]:
+          - img [ref=e136]
+        - heading "Entrar" [level=1] [ref=e138]
+    - main [ref=e139]:
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - img [ref=e143]
+          - heading "Notícias Colaborativas" [level=1] [ref=e146]
+          - paragraph [ref=e147]: Entre para continuar lendo e participando
+        - generic [ref=e148]:
+          - generic [ref=e149]:
+            - generic [ref=e150]: Username
+            - textbox "seu_usuario" [ref=e152]: admin
+          - generic [ref=e153]:
+            - generic [ref=e154]: Senha
+            - textbox "••••••••" [ref=e156]: "123456"
+          - generic [ref=e157]:
+            - button "Entrar" [active] [ref=e158]
+            - button "Não tem conta? Cadastre-se" [ref=e160]
+        - generic [ref=e161]:
+          - paragraph [ref=e162]: "Demo - use um destes usuários:"
+          - generic [ref=e163]:
+            - paragraph [ref=e164]:
+              - text: •
+              - strong [ref=e165]: admin
+              - text: "- SuperAdmin"
+            - paragraph [ref=e166]:
+              - text: •
+              - strong [ref=e167]: editor
+              - text: "- Editor"
+            - paragraph [ref=e168]:
+              - text: •
+              - strong [ref=e169]: autor
+              - text: "- Autor"
+            - paragraph [ref=e170]:
+              - text: •
+              - strong [ref=e171]: leitor
+              - text: "- Leitor"
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e172]:
+        - img [ref=e174]
+        - generic [ref=e177]: Login realizado como SUPERADMIN!

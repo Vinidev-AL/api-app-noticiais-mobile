@@ -1,0 +1,182 @@
+- generic [ref=e9]:
+  - generic [ref=e10]:
+    - generic [ref=e11]: 
+    - generic [ref=e12]: Minhas Notícias
+  - generic [ref=e15]:
+    - generic [ref=e16] [cursor=pointer]:
+      - generic [ref=e17]: 
+      - generic [ref=e18]: Nova Notícia
+    - generic [ref=e486]:
+      - generic [ref=e487]: Criar notícia
+      - textbox "Título" [ref=e488]: CRUD Playwright 1776137295893
+      - textbox "Resumo" [ref=e489]: Resumo inicial playwright
+      - textbox "Texto completo" [ref=e490]: Texto completo inicial para teste CRUD.
+      - textbox "URL da imagem (opcional)" [ref=e491]: https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80
+      - generic [ref=e492]:
+        - generic [ref=e497] [cursor=pointer]: Salvar
+        - generic [ref=e496] [cursor=pointer]: Cancelar
+    - generic [ref=e19]:
+      - generic [ref=e21] [cursor=pointer]: Todas (9)
+      - generic [ref=e23] [cursor=pointer]: Publicadas (4)
+      - generic [ref=e25] [cursor=pointer]: Rascunhos (5)
+    - generic [ref=e26]:
+      - generic [ref=e333]:
+        - generic [ref=e334]:
+          - generic [ref=e335]: CRUD Admin 1776136963653
+          - generic [ref=e337]: PUBLICADO
+        - generic [ref=e338]: Resumo alvo 1776137012341
+        - generic [ref=e339]: Criada em 14/04/2026
+        - generic [ref=e340]:
+          - generic [ref=e341] [cursor=pointer]:
+            - generic [ref=e342]: 
+            - generic [ref=e343]: Editar
+          - generic [ref=e344] [cursor=pointer]:
+            - generic [ref=e345]: 
+            - generic [ref=e346]: Despublicar
+          - generic [active] [ref=e347] [cursor=pointer]:
+            - generic [ref=e348]: 
+            - generic [ref=e349]: Excluir
+      - generic [ref=e350]:
+        - generic [ref=e351]:
+          - generic [ref=e352]: Teste
+          - generic [ref=e354]: PUBLICADO
+        - generic [ref=e355]: Resumo automatizado atualizado
+        - generic [ref=e356]: Criada em 14/04/2026
+        - generic [ref=e357]:
+          - generic [ref=e358] [cursor=pointer]:
+            - generic [ref=e359]: 
+            - generic [ref=e360]: Editar
+          - generic [ref=e361] [cursor=pointer]:
+            - generic [ref=e362]: 
+            - generic [ref=e363]: Despublicar
+          - generic [ref=e364] [cursor=pointer]:
+            - generic [ref=e365]: 
+            - generic [ref=e366]: Excluir
+      - generic [ref=e367]:
+        - generic [ref=e368]:
+          - generic [ref=e369]: Teste
+          - generic [ref=e371]: PUBLICADO
+        - generic [ref=e372]: teste
+        - generic [ref=e373]: Criada em 14/04/2026
+        - generic [ref=e374]:
+          - generic [ref=e375] [cursor=pointer]:
+            - generic [ref=e376]: 
+            - generic [ref=e377]: Editar
+          - generic [ref=e378] [cursor=pointer]:
+            - generic [ref=e379]: 
+            - generic [ref=e380]: Despublicar
+          - generic [ref=e381] [cursor=pointer]:
+            - generic [ref=e382]: 
+            - generic [ref=e383]: Excluir
+      - generic [ref=e384]:
+        - generic [ref=e385]:
+          - generic [ref=e386]: Teste
+          - generic [ref=e388]: PUBLICADO
+        - generic [ref=e389]: teste
+        - generic [ref=e390]: Criada em 14/04/2026
+        - generic [ref=e391]:
+          - generic [ref=e392] [cursor=pointer]:
+            - generic [ref=e393]: 
+            - generic [ref=e394]: Editar
+          - generic [ref=e395] [cursor=pointer]:
+            - generic [ref=e396]: 
+            - generic [ref=e397]: Despublicar
+          - generic [ref=e398] [cursor=pointer]:
+            - generic [ref=e399]: 
+            - generic [ref=e400]: Excluir
+      - generic [ref=e401]:
+        - generic [ref=e402]:
+          - generic [ref=e403]: Teste
+          - generic [ref=e405]: RASCUNHO
+        - generic [ref=e406]: teste
+        - generic [ref=e407]: Criada em 14/04/2026
+        - generic [ref=e408]:
+          - generic [ref=e409] [cursor=pointer]:
+            - generic [ref=e410]: 
+            - generic [ref=e411]: Editar
+          - generic [ref=e412] [cursor=pointer]:
+            - generic [ref=e413]: 
+            - generic [ref=e414]: Publicar
+          - generic [ref=e415] [cursor=pointer]:
+            - generic [ref=e416]: 
+            - generic [ref=e417]: Excluir
+      - generic [ref=e418]:
+        - generic [ref=e419]:
+          - generic [ref=e420]: Teste
+          - generic [ref=e422]: RASCUNHO
+        - generic [ref=e423]: teste
+        - generic [ref=e424]: Criada em 14/04/2026
+        - generic [ref=e425]:
+          - generic [ref=e426] [cursor=pointer]:
+            - generic [ref=e427]: 
+            - generic [ref=e428]: Editar
+          - generic [ref=e429] [cursor=pointer]:
+            - generic [ref=e430]: 
+            - generic [ref=e431]: Publicar
+          - generic [ref=e432] [cursor=pointer]:
+            - generic [ref=e433]: 
+            - generic [ref=e434]: Excluir
+      - generic [ref=e435]:
+        - generic [ref=e436]:
+          - generic [ref=e437]: Teste
+          - generic [ref=e439]: RASCUNHO
+        - generic [ref=e440]: teste
+        - generic [ref=e441]: Criada em 14/04/2026
+        - generic [ref=e442]:
+          - generic [ref=e443] [cursor=pointer]:
+            - generic [ref=e444]: 
+            - generic [ref=e445]: Editar
+          - generic [ref=e446] [cursor=pointer]:
+            - generic [ref=e447]: 
+            - generic [ref=e448]: Publicar
+          - generic [ref=e449] [cursor=pointer]:
+            - generic [ref=e450]: 
+            - generic [ref=e451]: Excluir
+      - generic [ref=e452]:
+        - generic [ref=e453]:
+          - generic [ref=e454]: Teste
+          - generic [ref=e456]: RASCUNHO
+        - generic [ref=e457]: teste
+        - generic [ref=e458]: Criada em 14/04/2026
+        - generic [ref=e459]:
+          - generic [ref=e460] [cursor=pointer]:
+            - generic [ref=e461]: 
+            - generic [ref=e462]: Editar
+          - generic [ref=e463] [cursor=pointer]:
+            - generic [ref=e464]: 
+            - generic [ref=e465]: Publicar
+          - generic [ref=e466] [cursor=pointer]:
+            - generic [ref=e467]: 
+            - generic [ref=e468]: Excluir
+      - generic [ref=e469]:
+        - generic [ref=e470]:
+          - generic [ref=e471]: Teste
+          - generic [ref=e473]: RASCUNHO
+        - generic [ref=e474]: teste
+        - generic [ref=e475]: Criada em 14/04/2026
+        - generic [ref=e476]:
+          - generic [ref=e477] [cursor=pointer]:
+            - generic [ref=e478]: 
+            - generic [ref=e479]: Editar
+          - generic [ref=e480] [cursor=pointer]:
+            - generic [ref=e481]: 
+            - generic [ref=e482]: Publicar
+          - generic [ref=e483] [cursor=pointer]:
+            - generic [ref=e484]: 
+            - generic [ref=e485]: Excluir
+  - generic [ref=e164]:
+    - generic [ref=e165] [cursor=pointer]:
+      - generic [ref=e166]: 
+      - generic [ref=e167]: Início
+    - generic [ref=e168] [cursor=pointer]:
+      - generic [ref=e169]: 
+      - generic [ref=e170]: Buscar
+    - generic [ref=e171] [cursor=pointer]:
+      - generic [ref=e172]: 
+      - generic [ref=e173]: Criar
+    - generic [ref=e174] [cursor=pointer]:
+      - generic [ref=e175]: 
+      - generic [ref=e176]: Admin
+    - generic [ref=e177] [cursor=pointer]:
+      - generic [ref=e178]: 
+      - generic [ref=e179]: Perfil

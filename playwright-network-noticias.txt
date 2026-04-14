@@ -1,0 +1,3 @@
+[GET] http://localhost:3000/api/noticias/todas => [200] OK
+[POST] http://localhost:3000/api/noticias => [201] Created
+  Request body: {"titulo":"DeleteCheck 1776139135800","resumo":"Resumo para teste de exclusão","texto":"Texto para teste de exclusão"}

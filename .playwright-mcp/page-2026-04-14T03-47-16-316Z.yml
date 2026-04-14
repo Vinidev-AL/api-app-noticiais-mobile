@@ -1,0 +1,80 @@
+- generic [ref=e23]:
+  - generic [ref=e25]:
+    - banner [ref=e26]:
+      - heading "Notícias" [level=1] [ref=e29]
+    - main [ref=e30]:
+      - generic [ref=e33]:
+        - img [ref=e34]
+        - searchbox "Buscar notícias..." [ref=e37]
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - heading "Por categoria" [level=2] [ref=e40]
+          - button [ref=e41]:
+            - img [ref=e42]
+        - generic [ref=e44]:
+          - button "Tecnologia" [ref=e45]:
+            - generic [ref=e46]: Tecnologia
+          - button "Política" [ref=e47]:
+            - generic [ref=e48]: Política
+          - button "Economia" [ref=e49]:
+            - generic [ref=e50]: Economia
+          - button "Sustentabilidade" [ref=e51]:
+            - generic [ref=e52]: Sustentabilidade
+          - button "Brasil" [ref=e53]:
+            - generic [ref=e54]: Brasil
+          - button "Internacional" [ref=e55]:
+            - generic [ref=e56]: Internacional
+      - generic [ref=e57]:
+        - heading "Últimas notícias" [level=2] [ref=e58]
+        - article [ref=e60] [cursor=pointer]:
+          - img "Tecnologia revoluciona o mercado de trabalho brasileiro" [ref=e62]
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - generic [ref=e65]: Tecnologia
+              - generic [ref=e66]: Mercado
+            - heading "Tecnologia revoluciona o mercado de trabalho brasileiro" [level=3] [ref=e67]
+            - paragraph [ref=e68]: Inteligência artificial e automação transformam profissões tradicionais e criam novas oportunidades.
+            - generic [ref=e69]:
+              - generic [ref=e70]: Por Maria Santos
+              - generic [ref=e71]:
+                - img [ref=e72]
+                - generic [ref=e75]: Hoje, 14:30
+        - article [ref=e77] [cursor=pointer]:
+          - img "Nova política de sustentabilidade impacta empresas" [ref=e79]
+          - generic [ref=e80]:
+            - generic [ref=e81]:
+              - generic [ref=e82]: Política
+              - generic [ref=e83]: Sustentabilidade
+            - heading "Nova política de sustentabilidade impacta empresas" [level=3] [ref=e84]
+            - paragraph [ref=e85]: Governo anuncia medidas para reduzir emissões de carbono em 40% até 2030.
+            - generic [ref=e86]:
+              - generic [ref=e87]: Por João Silva
+              - generic [ref=e88]:
+                - img [ref=e89]
+                - generic [ref=e92]: Ontem, 09:15
+        - article [ref=e94] [cursor=pointer]:
+          - img "Economia cresce acima do esperado no primeiro trimestre" [ref=e96]
+          - generic [ref=e97]:
+            - generic [ref=e98]:
+              - generic [ref=e99]: Economia
+              - generic [ref=e100]: Brasil
+            - heading "Economia cresce acima do esperado no primeiro trimestre" [level=3] [ref=e101]
+            - paragraph [ref=e102]: PIB surpreende analistas com expansão de 2.8%, impulsionado por exportações.
+            - generic [ref=e103]:
+              - generic [ref=e104]: Por Ana Oliveira
+              - generic [ref=e105]:
+                - img [ref=e106]
+                - generic [ref=e109]: 2 dias atrás
+    - navigation [ref=e110]:
+      - generic [ref=e112]:
+        - button "Início" [ref=e113]:
+          - img [ref=e115]
+          - generic [ref=e118]: Início
+        - button "Buscar" [ref=e119]:
+          - img [ref=e120]
+          - generic [ref=e123]: Buscar
+        - button "Perfil" [ref=e124]:
+          - img [ref=e125]
+          - generic [ref=e128]: Perfil
+  - region "Notifications alt+T"
+  - button "Login Demo" [ref=e129]
