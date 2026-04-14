@@ -1,10 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import { colors, spacing } from "../theme/tokens";
 
-export function AppHeader() {
+type AppHeaderProps = {
+  title?: string;
+};
+
+export function AppHeader({ title = "Notícias" }: AppHeaderProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Notícias</Text>
+      <Text style={styles.title}>{title}</Text>
     </View>
   );
 }

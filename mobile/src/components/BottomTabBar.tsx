@@ -1,34 +1,71 @@
 import { Feather } from "@expo/vector-icons";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, spacing } from "../theme/tokens";
 
-type TabItemProps = {
-  icon: keyof typeof Feather.glyphMap;
+export type AppTab = "home" | "search" | "create" | "admin" | "profile";
+
+export type TabConfig = {
+  tab: AppTab;
   label: string;
-  active?: boolean;
+  icon: keyof typeof Feather.glyphMap;
 };
 
-function TabItem({ icon, label, active = false }: TabItemProps) {
+export const DEFAULT_TABS: TabConfig[] = [
+  { tab: "home", label: "Início", icon: "home" },
+  { tab: "search", label: "Buscar", icon: "search" },
+  { tab: "profile", label: "Perfil", icon: "user" },
+];
+
+export const SUPERADMIN_TABS: TabConfig[] = [
+  { tab: "home", label: "Início", icon: "home" },
+  { tab: "search", label: "Buscar", icon: "search" },
+  { tab: "create", label: "Criar", icon: "edit-3" },
+  { tab: "admin", label: "Admin", icon: "shield" },
+  { tab: "profile", label: "Perfil", icon: "user" },
+];
+
+type TabItemProps = {
+  config: TabConfig;
+  active: boolean;
+  onPress: (tab: AppTab) => void;
+};
+
+function TabItem({ config, active, onPress }: TabItemProps) {
   return (
-    <View style={styles.tabItem}>
+    <Pressable style={styles.tabItem} onPress={() => onPress(config.tab)}>
       <Feather
-        name={icon}
+        name={config.icon}
         size={18}
         color={active ? colors.navActive : colors.navTint}
       />
       <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>
-        {label}
+        {config.label}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 
-export function BottomTabBar() {
+type BottomTabBarProps = {
+  activeTab: AppTab;
+  onTabPress: (tab: AppTab) => void;
+  tabs?: TabConfig[];
+};
+
+export function BottomTabBar({
+  activeTab,
+  onTabPress,
+  tabs = DEFAULT_TABS,
+}: BottomTabBarProps) {
   return (
     <View style={styles.container}>
-      <TabItem icon="home" label="Início" active />
-      <TabItem icon="search" label="Buscar" />
-      <TabItem icon="user" label="Perfil" />
+      {tabs.map((config) => (
+        <TabItem
+          key={config.tab}
+          config={config}
+          active={activeTab === config.tab}
+          onPress={onTabPress}
+        />
+      ))}
     </View>
   );
 }
