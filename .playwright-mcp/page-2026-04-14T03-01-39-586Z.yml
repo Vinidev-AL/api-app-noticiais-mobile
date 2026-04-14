@@ -1,0 +1,67 @@
+- generic [ref=e6]:
+  - generic [ref=e452]:
+    - banner [ref=e453]:
+      - generic [ref=e455]:
+        - button [ref=e456]:
+          - img [ref=e457]
+        - heading "Minhas Notícias" [level=1] [ref=e459]
+    - main [ref=e460]:
+      - button "Nova Notícia" [ref=e462]:
+        - img [ref=e464]
+        - text: Nova Notícia
+      - generic [ref=e465]:
+        - button "Todas (2)" [ref=e466]:
+          - generic [ref=e467]: Todas (2)
+        - button "Publicadas (1)" [ref=e468]:
+          - generic [ref=e469]: Publicadas (1)
+        - button "Rascunhos (1)" [ref=e470]:
+          - generic [ref=e471]: Rascunhos (1)
+      - generic [ref=e472]:
+        - article [ref=e474] [cursor=pointer]:
+          - generic [ref=e475]:
+            - img "Tecnologia revoluciona o mercado de trabalho brasileiro" [ref=e476]
+            - generic [ref=e478]: PUBLICADO
+          - generic [ref=e479]:
+            - generic [ref=e480]:
+              - generic [ref=e481]: Tecnologia
+              - generic [ref=e482]: Mercado
+            - heading "Tecnologia revoluciona o mercado de trabalho brasileiro" [level=3] [ref=e483]
+            - paragraph [ref=e484]: Inteligência artificial e automação transformam profissões tradicionais.
+            - generic [ref=e485]:
+              - generic [ref=e486]: Por Você
+              - generic [ref=e487]:
+                - img [ref=e488]
+                - generic [ref=e491]: Há 2 dias
+        - article [ref=e493] [cursor=pointer]:
+          - generic [ref=e494]:
+            - img "O futuro da energia renovável no Brasil" [ref=e495]
+            - generic [ref=e497]: RASCUNHO
+          - generic [ref=e498]:
+            - generic [ref=e499]:
+              - generic [ref=e500]: Sustentabilidade
+              - generic [ref=e501]: Energia
+            - heading "O futuro da energia renovável no Brasil" [level=3] [ref=e502]
+            - paragraph [ref=e503]: País investe em fontes limpas para alcançar metas climáticas.
+            - generic [ref=e504]:
+              - generic [ref=e505]: Por Você
+              - generic [ref=e506]:
+                - img [ref=e507]
+                - generic [ref=e510]: Há 1 hora
+    - navigation [ref=e511]:
+      - generic [ref=e513]:
+        - button "Início" [ref=e514]:
+          - img [ref=e515]
+          - generic [ref=e518]: Início
+        - button "Buscar" [ref=e519]:
+          - img [ref=e520]
+          - generic [ref=e523]: Buscar
+        - button "Criar" [ref=e524]:
+          - img [ref=e526]
+          - generic [ref=e529]: Criar
+        - button "Admin" [ref=e530]:
+          - img [ref=e531]
+          - generic [ref=e536]: Admin
+        - button "Perfil" [ref=e537]:
+          - img [ref=e538]
+          - generic [ref=e541]: Perfil
+  - region "Notifications alt+T"

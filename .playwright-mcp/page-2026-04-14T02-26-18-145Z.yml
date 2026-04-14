@@ -1,0 +1,33 @@
+- generic [ref=e87]:
+  - generic [ref=e89]: Buscar
+  - generic [ref=e92]:
+    - generic [ref=e93]:
+      - generic [ref=e94]: 
+      - textbox "Buscar por título, tag ou autor..." [ref=e95]
+    - generic [ref=e96]:
+      - generic [ref=e97]: Buscar por categoria
+      - generic [ref=e98]:
+        - generic [ref=e100]: Tecnologia
+        - generic [ref=e102]: Política
+        - generic [ref=e104]: Economia
+        - generic [ref=e106]: Sustentabilidade
+        - generic [ref=e108]: Brasil
+        - generic [ref=e110]: Internacional
+        - generic [ref=e112]: Cultura
+        - generic [ref=e114]: Esportes
+        - generic [ref=e116]: Saúde
+        - generic [ref=e118]: Educação
+    - generic [ref=e119]:
+      - generic [ref=e121]: 
+      - generic [ref=e122]: Explore as notícias
+      - generic [ref=e123]: Use a busca ou selecione uma categoria para começar
+  - generic [ref=e125]:
+    - generic [ref=e126] [cursor=pointer]:
+      - generic [ref=e127]: 
+      - generic [ref=e128]: Início
+    - generic [ref=e129] [cursor=pointer]:
+      - generic [ref=e130]: 
+      - generic [ref=e131]: Buscar
+    - generic [ref=e132] [cursor=pointer]:
+      - generic [ref=e133]: 
+      - generic [ref=e134]: Perfil

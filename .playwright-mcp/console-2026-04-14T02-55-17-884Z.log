@@ -1,0 +1,29 @@
+[     224ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:8081/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:19154
+[     270ms] [WARNING] "shadow*" style props are deprecated. Use "boxShadow". @ http://localhost:8081/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:24058
+[     278ms] [LOG] Running application "main" with appParams:
+ {rootTag: #root, hydrate: undefined} 
+Development-level warnings: ON.
+Performance optimizations: OFF. @ http://localhost:8081/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:4873
+[    1293ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ http://localhost:8081/:0
+[   77231ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ http://localhost:8081/:0
+[   80450ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ http://localhost:8081/:0
+[   83652ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ http://localhost:8081/:0
+[  117334ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ http://localhost:8081/:0
+[  124924ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/auth/login:0
+[  618499ms] Error: TransformError SyntaxError: C:\Users\Public\api-app-noticiais-mobile\mobile\src\screens\MyNewsScreen.tsx: Identifier 'myNews' has already been declared. (296:6)
+
+[0m [90m 294 |[39m [36mimport[39m { colors[33m,[39m radius[33m,[39m spacing } [36mfrom[39m [32m"../theme/tokens"[39m[33m;[39m
+ [90m 295 |[39m
+[31m[1m>[22m[39m[90m 296 |[39m [36mconst[39m myNews [33m=[39m [
+ [90m     |[39m       [31m[1m^[22m[39m
+ [90m 297 |[39m   {
+ [90m 298 |[39m     id[33m:[39m [32m"1"[39m[33m,[39m
+ [90m 299 |[39m     title[33m:[39m [32m"Tecnologia revoluciona o mercado de trabalho brasileiro"[39m[33m,[39m[0m
+    at showCompileError (http://localhost:8081/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:2368:19)
+    at HMRClient.<anonymous> (http://localhost:8081/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:2288:13)
+    at HMRClient.emit (http://localhost:8081/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:2619:31)
+    at HMRClient._ws.onmessage (http://localhost:8081/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:2434:18)
+[  695819ms] [WARNING] Disconnected from Metro (1006)
+To reconnect:
+- Ensure that Metro is running and available on the same network
+- Reload this app (will trigger further help if Metro cannot be connected to) @ http://localhost:8081/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:2327

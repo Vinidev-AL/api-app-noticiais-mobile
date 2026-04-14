@@ -1,0 +1,55 @@
+- generic [ref=e4]:
+  - generic [ref=e114]:
+    - img [ref=e116]
+    - paragraph [ref=e119]: Criado com o Figma Make
+    - generic [ref=e120]:
+      - link "Remix" [ref=e121] [cursor=pointer]:
+        - /url: https://www.figma.com/community/file/1625691907035408371?openSignupModal=true
+      - button "Mais opções" [ref=e123] [cursor=pointer]:
+        - img [ref=e124]
+      - button "Fechar" [ref=e127] [cursor=pointer]:
+        - img [ref=e128]
+  - generic [ref=e7]:
+    - generic [ref=e194]:
+      - banner [ref=e195]:
+        - generic [ref=e197]:
+          - button [ref=e198]:
+            - img [ref=e199]
+          - heading "Entrar" [level=1] [ref=e201]
+      - main [ref=e202]:
+        - generic [ref=e203]:
+          - generic [ref=e204]:
+            - img [ref=e206]
+            - heading "Notícias Colaborativas" [level=1] [ref=e209]
+            - paragraph [ref=e210]: Entre para continuar lendo e participando
+          - generic [ref=e211]:
+            - generic [ref=e212]:
+              - generic [ref=e213]: Username
+              - textbox "seu_usuario" [ref=e215]
+            - generic [ref=e216]:
+              - generic [ref=e217]: Senha
+              - textbox "••••••••" [ref=e219]
+            - generic [ref=e220]:
+              - button "Entrar" [ref=e221]
+              - button "Não tem conta? Cadastre-se" [ref=e223]
+          - generic [ref=e224]:
+            - paragraph [ref=e225]: "Demo - use um destes usuários:"
+            - generic [ref=e226]:
+              - paragraph [ref=e227]:
+                - text: •
+                - strong [ref=e228]: admin
+                - text: "- SuperAdmin"
+              - paragraph [ref=e229]:
+                - text: •
+                - strong [ref=e230]: editor
+                - text: "- Editor"
+              - paragraph [ref=e231]:
+                - text: •
+                - strong [ref=e232]: autor
+                - text: "- Autor"
+              - paragraph [ref=e233]:
+                - text: •
+                - strong [ref=e234]: leitor
+                - text: "- Leitor"
+    - region "Notifications alt+T"
+    - button "Login Demo" [ref=e113]

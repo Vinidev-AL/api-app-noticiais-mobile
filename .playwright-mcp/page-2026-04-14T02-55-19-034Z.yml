@@ -1,0 +1,67 @@
+- generic [ref=e3]:
+  - generic [ref=e9]:
+    - generic [ref=e10]: 
+    - generic [ref=e11]: Sessão encerrada com sucesso.
+  - generic [ref=e12]:
+    - generic [ref=e14]: Notícias
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]: 
+        - textbox "Buscar notícias..." [ref=e20]
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]: Por categoria
+          - generic [ref=e25]: 
+        - generic [ref=e27]:
+          - generic [ref=e29] [cursor=pointer]: Tecnologia
+          - generic [ref=e31] [cursor=pointer]: Política
+          - generic [ref=e33] [cursor=pointer]: Economia
+          - generic [ref=e35] [cursor=pointer]: Sustentabilidade
+          - generic [ref=e37] [cursor=pointer]: Brasil
+          - generic [ref=e39] [cursor=pointer]: Internacional
+      - generic [ref=e40]:
+        - generic [ref=e41]: Últimas notícias
+        - generic [ref=e42]:
+          - generic [ref=e46]:
+            - generic [ref=e47]:
+              - generic [ref=e48]: Tecnologia
+              - generic [ref=e49]: Mercado
+            - generic [ref=e50]: Tecnologia revoluciona o mercado de trabalho brasileiro
+            - generic [ref=e51]: Inteligência artificial e automação transformam profissões tradicionais e criam novas oportunidades.
+            - generic [ref=e52]:
+              - generic [ref=e53]: Por Maria Santos
+              - generic [ref=e54]:
+                - generic [ref=e55]: 
+                - generic [ref=e56]: Hoje, 14:30
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - generic [ref=e62]: Política
+              - generic [ref=e63]: Sustentabilidade
+            - generic [ref=e64]: Nova política de sustentabilidade impacta empresas
+            - generic [ref=e65]: Governo anuncia medidas para reduzir emissões de carbono em 40% até 2030.
+            - generic [ref=e66]:
+              - generic [ref=e67]: Por João Silva
+              - generic [ref=e68]:
+                - generic [ref=e69]: 
+                - generic [ref=e70]: Ontem, 09:15
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - generic [ref=e76]: Economia
+              - generic [ref=e77]: Brasil
+            - generic [ref=e78]: Economia cresce acima do esperado no primeiro trimestre
+            - generic [ref=e79]: PIB surpreende analistas com expansão de 2.8%, impulsionado por exportações.
+            - generic [ref=e80]:
+              - generic [ref=e81]: Por Ana Oliveira
+              - generic [ref=e82]:
+                - generic [ref=e83]: 
+                - generic [ref=e84]: 2 dias atrás
+    - generic [ref=e86]:
+      - generic [ref=e87] [cursor=pointer]:
+        - generic [ref=e88]: 
+        - generic [ref=e89]: Início
+      - generic [ref=e90] [cursor=pointer]:
+        - generic [ref=e91]: 
+        - generic [ref=e92]: Buscar
+      - generic [ref=e93] [cursor=pointer]:
+        - generic [ref=e94]: 
+        - generic [ref=e95]: Perfil

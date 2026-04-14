@@ -1,0 +1,34 @@
+- generic [ref=e176]:
+  - generic [ref=e177]:
+    - generic [ref=e179] [cursor=pointer]: 
+    - generic [ref=e180]: Entrar
+  - generic [ref=e183]:
+    - generic [ref=e184]:
+      - generic [ref=e186]: 
+      - generic [ref=e187]: Notícias Colaborativas
+      - generic [ref=e188]: Entre para continuar lendo e participando
+    - generic [ref=e189]:
+      - generic [ref=e190]:
+        - generic [ref=e191]: Username
+        - textbox "seu_usuario" [ref=e192]
+      - generic [ref=e193]:
+        - generic [ref=e194]: Senha
+        - textbox "••••••••" [ref=e195]
+      - generic [ref=e197] [cursor=pointer]: Entrar
+      - generic [ref=e199] [cursor=pointer]: Não tem conta? Cadastre-se
+    - generic [ref=e200]:
+      - generic [ref=e201]: "Demo - use um destes usuários:"
+      - generic [ref=e202]: • admin - SuperAdmin
+      - generic [ref=e203]: • editor - Editor
+      - generic [ref=e204]: • autor - Autor
+      - generic [ref=e205]: • leitor - Leitor
+  - generic [ref=e207]:
+    - generic [ref=e208] [cursor=pointer]:
+      - generic [ref=e209]: 
+      - generic [ref=e210]: Início
+    - generic [ref=e211] [cursor=pointer]:
+      - generic [ref=e212]: 
+      - generic [ref=e213]: Buscar
+    - generic [ref=e214] [cursor=pointer]:
+      - generic [ref=e215]: 
+      - generic [ref=e216]: Perfil
