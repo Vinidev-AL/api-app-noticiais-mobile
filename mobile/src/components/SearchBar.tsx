@@ -4,10 +4,14 @@ import { colors, radius, spacing } from "../theme/tokens";
 
 type SearchBarProps = {
   placeholder?: string;
+  value?: string;
+  onChangeText?: (value: string) => void;
 };
 
 export function SearchBar({
   placeholder = "Buscar notícias...",
+  value,
+  onChangeText,
 }: SearchBarProps) {
   return (
     <View style={styles.wrapper}>
@@ -21,6 +25,8 @@ export function SearchBar({
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor={colors.textMuted}
+        value={value}
+        onChangeText={onChangeText}
       />
     </View>
   );

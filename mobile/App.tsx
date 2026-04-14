@@ -142,12 +142,14 @@ export default function App() {
           activeTab={activeTab}
           onTabPress={handleTabPress}
           tabs={visibleTabs}
+          session={session}
         />
       ) : activeTab === "admin" ? (
         <AdminScreen
           activeTab={activeTab}
           onTabPress={handleTabPress}
           tabs={visibleTabs}
+          session={session}
         />
       ) : activeTab === "profile" ? (
         <ProfileScreen

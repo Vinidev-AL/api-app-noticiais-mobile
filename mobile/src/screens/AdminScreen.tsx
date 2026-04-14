@@ -1,14 +1,17 @@
 import { Feather } from "@expo/vector-icons";
-import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { useEffect, useMemo, useState } from "react";
 import { AppTab, BottomTabBar, TabConfig } from "../components/BottomTabBar";
+import { AuthSession } from "../types/auth";
+import { loadAdminStats } from "../services/superadmin";
 import { colors, radius, spacing } from "../theme/tokens";
-
-const stats = [
-  { label: "Total de Usuários", value: "1,234", icon: "users" as const },
-  { label: "Total de Notícias", value: "567", icon: "file-text" as const },
-  { label: "Comentários", value: "3,456", icon: "message-circle" as const },
-  { label: "Visualizações", value: "45.2k", icon: "bar-chart-2" as const },
-];
 
 const management = [
   { label: "Usuários", icon: "users" as const },
@@ -24,9 +27,82 @@ type AdminScreenProps = {
   activeTab: AppTab;
   onTabPress: (tab: AppTab) => void;
   tabs: TabConfig[];
+  session: AuthSession | null;
 };
 
-export function AdminScreen({ activeTab, onTabPress, tabs }: AdminScreenProps) {
+export function AdminScreen({
+  activeTab,
+  onTabPress,
+  tabs,
+  session,
+}: AdminScreenProps) {
+  const [stats, setStats] = useState<{
+    totalUsuarios: number;
+    totalNoticias: number;
+    totalPublicadas: number;
+    totalRascunhos: number;
+    totalTags: number;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!session?.accessToken) {
+        setError("Sessão inválida. Faça login novamente.");
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+      try {
+        const data = await loadAdminStats(session.accessToken);
+        setStats(data);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Falha ao carregar métricas do painel.",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void load();
+  }, [session?.accessToken]);
+
+  const statCards = useMemo(() => {
+    if (!stats) {
+      return [];
+    }
+
+    return [
+      {
+        label: "Total de Usuários",
+        value: String(stats.totalUsuarios),
+        icon: "users" as const,
+      },
+      {
+        label: "Total de Notícias",
+        value: String(stats.totalNoticias),
+        icon: "file-text" as const,
+      },
+      {
+        label: "Publicadas",
+        value: String(stats.totalPublicadas),
+        icon: "check-circle" as const,
+      },
+      {
+        label: "Rascunhos",
+        value: String(stats.totalRascunhos),
+        icon: "edit-3" as const,
+      },
+      { label: "Tags", value: String(stats.totalTags), icon: "tag" as const },
+    ];
+  }, [stats]);
+
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
@@ -52,15 +128,27 @@ export function AdminScreen({ activeTab, onTabPress, tabs }: AdminScreenProps) {
             </View>
           </View>
 
-          <View style={styles.statsGrid}>
-            {stats.map((stat) => (
-              <View key={stat.label} style={styles.statCard}>
-                <Feather name={stat.icon} size={16} color={colors.navTint} />
-                <Text style={styles.statValue}>{stat.value}</Text>
-                <Text style={styles.statLabel}>{stat.label}</Text>
-              </View>
-            ))}
-          </View>
+          {isLoading ? (
+            <View style={styles.feedbackBox}>
+              <ActivityIndicator size="small" color={colors.text} />
+              <Text style={styles.feedbackText}>Carregando métricas...</Text>
+            </View>
+          ) : error ? (
+            <View style={styles.feedbackBox}>
+              <Feather name="alert-circle" size={16} color="#A33C39" />
+              <Text style={styles.feedbackText}>{error}</Text>
+            </View>
+          ) : (
+            <View style={styles.statsGrid}>
+              {statCards.map((stat) => (
+                <View key={stat.label} style={styles.statCard}>
+                  <Feather name={stat.icon} size={16} color={colors.navTint} />
+                  <Text style={styles.statValue}>{stat.value}</Text>
+                  <Text style={styles.statLabel}>{stat.label}</Text>
+                </View>
+              ))}
+            </View>
+          )}
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Gerenciamento</Text>
@@ -166,6 +254,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: spacing.sm,
+  },
+  feedbackBox: {
+    minHeight: 64,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+  },
+  feedbackText: {
+    fontFamily: "DMSans_400Regular",
+    fontSize: 13,
+    color: colors.textMuted,
+    textAlign: "center",
   },
   statCard: {
     width: "48%",
