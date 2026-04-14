@@ -4,9 +4,6 @@ coverage/
 .eslintcache
 .npm/
 
-.env
-.env.*
-
 data/*.db
 data/*.db-journal
 data/*.db-shm
