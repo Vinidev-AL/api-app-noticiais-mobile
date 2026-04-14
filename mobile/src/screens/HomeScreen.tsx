@@ -1,13 +1,19 @@
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { categories, latestNews } from "../data/homeFeed";
 import { AppHeader } from "../components/AppHeader";
-import { BottomTabBar } from "../components/BottomTabBar";
+import { AppTab, BottomTabBar, TabConfig } from "../components/BottomTabBar";
 import { CategorySection } from "../components/CategorySection";
 import { LatestNewsSection } from "../components/LatestNewsSection";
 import { SearchBar } from "../components/SearchBar";
 import { colors, spacing } from "../theme/tokens";
 
-export function HomeScreen() {
+type HomeScreenProps = {
+  activeTab: AppTab;
+  onTabPress: (tab: AppTab) => void;
+  tabs: TabConfig[];
+};
+
+export function HomeScreen({ activeTab, onTabPress, tabs }: HomeScreenProps) {
   return (
     <View style={styles.screen}>
       <AppHeader />
@@ -26,7 +32,11 @@ export function HomeScreen() {
       </View>
 
       <View style={styles.tabBarWrapper}>
-        <BottomTabBar />
+        <BottomTabBar
+          activeTab={activeTab}
+          onTabPress={onTabPress}
+          tabs={tabs}
+        />
       </View>
     </View>
   );
