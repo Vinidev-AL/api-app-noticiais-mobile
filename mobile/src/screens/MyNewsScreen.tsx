@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   Modal,
   Platform,
   Pressable,
@@ -17,6 +18,7 @@ import {
   createNoticia,
   deleteNoticia,
   listAllNoticias,
+  listMyNoticias,
   publishNoticia,
   SuperadminNoticia,
   unpublishNoticia,
@@ -24,6 +26,7 @@ import {
 } from "../services/superadmin";
 import { AuthSession } from "../types/auth";
 import { colors, radius, spacing } from "../theme/tokens";
+import * as ImagePicker from "expo-image-picker";
 
 type FilterType = "all" | "publicadas" | "rascunhos";
 type PendingActionType = "publish" | "delete" | null;
@@ -79,6 +82,7 @@ export function MyNewsScreen({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [isSaving, setIsSaving] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(false);
   const [pendingActionId, setPendingActionId] = useState<string | null>(null);
   const [pendingActionType, setPendingActionType] =
     useState<PendingActionType>(null);
@@ -90,6 +94,8 @@ export function MyNewsScreen({
   const [hasMore, setHasMore] = useState(true);
 
   const token = session?.accessToken ?? "";
+  const role = session?.user.role ?? "";
+  const isAutor = role === "AUTOR";
   const isAnyApiActionPending = isSaving || pendingActionId !== null;
 
   const filteredNews = useMemo(() => {
@@ -130,10 +136,15 @@ export function MyNewsScreen({
 
     setError(null);
     try {
-      const response = await listAllNoticias(token, {
-        page: nextPage,
-        limit: PAGE_SIZE,
-      });
+      const response = isAutor
+        ? await listMyNoticias(token, {
+          page: nextPage,
+          limit: PAGE_SIZE,
+        })
+        : await listAllNoticias(token, {
+          page: nextPage,
+          limit: PAGE_SIZE,
+        });
 
       setPage(response.meta.page);
       setHasMore(response.meta.page < response.meta.totalPages);
@@ -152,7 +163,7 @@ export function MyNewsScreen({
 
   useEffect(() => {
     void loadNews(1, "replace");
-  }, [token]);
+  }, [token, isAutor]);
 
   const handleLoadMore = () => {
     if (!hasMore || isLoadingMore) {
@@ -187,6 +198,45 @@ export function MyNewsScreen({
       imagem: item.imagem ?? "",
     });
     setIsFormOpen(true);
+  };
+
+  const handlePickImage = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert("Permissão", "Permita o acesso à galeria para escolher a imagem.");
+      return;
+    }
+
+    setIsImageLoading(true);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [16, 9],
+        quality: 0.8,
+        base64: true,
+      });
+
+      if (result.canceled || !result.assets[0]) {
+        return;
+      }
+
+      const asset = result.assets[0];
+      if (!asset.base64) {
+        Alert.alert("Imagem", "Nao foi possivel ler a imagem selecionada.");
+        return;
+      }
+
+      const mimeType = asset.mimeType ?? "image/jpeg";
+      const dataUrl = `data:${mimeType};base64,${asset.base64}`;
+      setForm((prev) => ({ ...prev, imagem: dataUrl }));
+    } finally {
+      setIsImageLoading(false);
+    }
+  };
+
+  const handleClearImage = () => {
+    setForm((prev) => ({ ...prev, imagem: "" }));
   };
 
   const handleSave = async () => {
@@ -338,15 +388,38 @@ export function MyNewsScreen({
                 placeholderTextColor={colors.textMuted}
                 multiline
               />
-              <TextInput
-                style={styles.input}
-                value={form.imagem}
-                onChangeText={(value) =>
-                  setForm((prev) => ({ ...prev, imagem: value }))
-                }
-                placeholder="URL da imagem (opcional)"
-                placeholderTextColor={colors.textMuted}
-              />
+
+              <View style={styles.imageField}>
+                <Text style={styles.imageLabel}>Imagem da notícia</Text>
+                <View style={styles.imageActions}>
+                  <Pressable
+                    style={[
+                      styles.imageButton,
+                      isImageLoading && styles.disabledButton,
+                    ]}
+                    onPress={handlePickImage}
+                    disabled={isImageLoading}
+                  >
+                    <Feather name="image" size={16} color={colors.text} />
+                    <Text style={styles.imageButtonText}>
+                      {form.imagem ? "Trocar imagem" : "Selecionar imagem"}
+                    </Text>
+                  </Pressable>
+
+                  {form.imagem ? (
+                    <Pressable
+                      style={styles.imageClearButton}
+                      onPress={handleClearImage}
+                    >
+                      <Text style={styles.imageClearText}>Remover</Text>
+                    </Pressable>
+                  ) : null}
+                </View>
+
+                {form.imagem ? (
+                  <Image source={{ uri: form.imagem }} style={styles.imagePreview} />
+                ) : null}
+              </View>
 
               <View style={styles.formActions}>
                 <Pressable
@@ -720,6 +793,52 @@ const styles = StyleSheet.create({
   textArea: {
     minHeight: 100,
     textAlignVertical: "top",
+  },
+  imageField: {
+    gap: spacing.sm,
+  },
+  imageLabel: {
+    fontFamily: "DMSans_500Medium",
+    fontSize: 14,
+    color: colors.text,
+  },
+  imageActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  imageButton: {
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    backgroundColor: colors.background,
+  },
+  imageButtonText: {
+    fontFamily: "DMSans_500Medium",
+    fontSize: 14,
+    color: colors.text,
+  },
+  imageClearButton: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+  },
+  imageClearText: {
+    fontFamily: "DMSans_500Medium",
+    fontSize: 13,
+    color: colors.textMuted,
+  },
+  imagePreview: {
+    width: "100%",
+    height: 160,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
   },
   formActions: {
     flexDirection: "row",

@@ -7,7 +7,7 @@ import { Inject } from '@nestjs/common';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { DB } from '../db/db.module';
-import { noticiaTags, noticias, tags } from '../db/schema';
+import { noticiaTags, noticias, tags, users } from '../db/schema';
 import { CreateNoticiaDto } from './dto/create-noticia.dto';
 import { UpdateNoticiaDto } from './dto/update-noticia.dto';
 import { NoticiaStatus } from '../common/noticia-status.enum';
@@ -58,8 +58,21 @@ export class NoticiasService {
         .get()?.count ?? 0;
 
     const data = this.db
-      .select()
+      .select({
+        id: noticias.id,
+        titulo: noticias.titulo,
+        imagem: noticias.imagem,
+        resumo: noticias.resumo,
+        texto: noticias.texto,
+        autorId: noticias.autorId,
+        autorNome: users.nome,
+        autorUsername: users.username,
+        status: noticias.status,
+        dataCriacao: noticias.dataCriacao,
+        dataPublicacao: noticias.dataPublicacao,
+      })
       .from(noticias)
+      .leftJoin(users, eq(users.id, noticias.autorId))
       .where(eq(noticias.status, NoticiaStatus.PUBLICADO))
       .orderBy(desc(noticias.dataPublicacao))
       .limit(limit)
@@ -230,7 +243,7 @@ export class NoticiasService {
     return this.getById(id, user);
   }
 
-  publish(id: string) {
+  publish(id: string, user: CurrentUserPayload) {
     const noticia = this.db
       .select()
       .from(noticias)
@@ -238,6 +251,14 @@ export class NoticiasService {
       .get();
     if (!noticia) {
       throw new NotFoundException('Noticia nao encontrada.');
+    }
+
+    if (user.role === Role.AUTOR && noticia.autorId !== user.userId) {
+      throw new ForbiddenException('Acesso negado.');
+    }
+
+    if (user.role === Role.LEITOR) {
+      throw new ForbiddenException('Acesso negado.');
     }
 
     this.db
@@ -252,8 +273,16 @@ export class NoticiasService {
     return this.getById(id);
   }
 
-  unpublish(id: string) {
-    this.findByIdOrThrow(id);
+  unpublish(id: string, user: CurrentUserPayload) {
+    const noticia = this.findByIdOrThrow(id);
+
+    if (user.role === Role.AUTOR && noticia.autorId !== user.userId) {
+      throw new ForbiddenException('Acesso negado.');
+    }
+
+    if (user.role === Role.LEITOR) {
+      throw new ForbiddenException('Acesso negado.');
+    }
 
     this.db
       .update(noticias)

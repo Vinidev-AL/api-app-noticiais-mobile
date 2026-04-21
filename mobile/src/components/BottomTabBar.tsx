@@ -25,6 +25,20 @@ export const SUPERADMIN_TABS: TabConfig[] = [
   { tab: "profile", label: "Perfil", icon: "user" },
 ];
 
+export const EDITOR_TABS: TabConfig[] = [
+  { tab: "home", label: "Início", icon: "home" },
+  { tab: "search", label: "Buscar", icon: "search" },
+  { tab: "create", label: "Criar", icon: "edit-3" },
+  { tab: "profile", label: "Perfil", icon: "user" },
+];
+
+export const AUTOR_TABS: TabConfig[] = [
+  { tab: "home", label: "Início", icon: "home" },
+  { tab: "search", label: "Buscar", icon: "search" },
+  { tab: "create", label: "Criar", icon: "edit-3" },
+  { tab: "profile", label: "Perfil", icon: "user" },
+];
+
 type TabItemProps = {
   config: TabConfig;
   active: boolean;

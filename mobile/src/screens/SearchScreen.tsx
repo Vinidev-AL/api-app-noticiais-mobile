@@ -38,6 +38,8 @@ type PublishedNoticia = {
   texto: string;
   imagem: string | null;
   autorId: string;
+  autorNome: string | null;
+  autorUsername: string | null;
 };
 
 type PaginationMeta = {
@@ -130,7 +132,7 @@ export function SearchScreen({
 
     return news.filter((item) => {
       const searchable =
-        `${item.titulo} ${item.resumo} ${item.texto}`.toLowerCase();
+        `${item.titulo} ${item.resumo} ${item.texto} ${item.autorNome ?? ""} ${item.autorUsername ?? ""}`.toLowerCase();
 
       const matchesQuery =
         !normalizedQuery ||
@@ -229,7 +231,9 @@ export function SearchScreen({
                   <View key={item.id} style={styles.resultCard}>
                     <Text style={styles.resultTitle}>{item.titulo}</Text>
                     <Text style={styles.resultSummary}>{item.resumo}</Text>
-                    <Text style={styles.resultMeta}>Autor: {item.autorId}</Text>
+                    <Text style={styles.resultMeta}>
+                      Autor: {item.autorNome ?? item.autorUsername ?? item.autorId}
+                    </Text>
                   </View>
                 ))}
               </View>

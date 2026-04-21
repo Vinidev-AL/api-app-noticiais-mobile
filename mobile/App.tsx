@@ -24,7 +24,9 @@ import { SearchScreen } from "./src/screens/SearchScreen";
 import { ProfileScreen } from "./src/screens/ProfileScreen";
 import {
   AppTab,
+  AUTOR_TABS,
   DEFAULT_TABS,
+  EDITOR_TABS,
   SUPERADMIN_TABS,
 } from "./src/components/BottomTabBar";
 import { AuthSession } from "./src/types/auth";
@@ -85,8 +87,17 @@ export default function App() {
     }, 2200);
   };
 
-  const isSuperAdmin = session?.user.role === "SUPERADMIN";
-  const visibleTabs = isSuperAdmin ? SUPERADMIN_TABS : DEFAULT_TABS;
+  const role = session?.user.role ?? "";
+  const isSuperAdmin = role === "SUPERADMIN";
+  const canCreate = role === "SUPERADMIN" || role === "EDITOR" || role === "AUTOR";
+  const canAdmin = role === "SUPERADMIN";
+  const visibleTabs = isSuperAdmin
+    ? SUPERADMIN_TABS
+    : role === "EDITOR"
+      ? EDITOR_TABS
+      : role === "AUTOR"
+        ? AUTOR_TABS
+        : DEFAULT_TABS;
 
   const handleLoginSuccess = async (nextSession: AuthSession) => {
     setSession(nextSession);
@@ -111,7 +122,12 @@ export default function App() {
       return;
     }
 
-    if ((tab === "create" || tab === "admin") && !isSuperAdmin) {
+    if (tab === "create" && !canCreate) {
+      setActiveTab("home");
+      return;
+    }
+
+    if (tab === "admin" && !canAdmin) {
       setActiveTab("home");
       return;
     }
@@ -120,10 +136,14 @@ export default function App() {
   };
 
   useEffect(() => {
-    if ((activeTab === "create" || activeTab === "admin") && !isSuperAdmin) {
+    if (activeTab === "create" && !canCreate) {
       setActiveTab("home");
     }
-  }, [activeTab, isSuperAdmin]);
+
+    if (activeTab === "admin" && !canAdmin) {
+      setActiveTab("home");
+    }
+  }, [activeTab, canAdmin, canCreate]);
 
   if (!iconsLoaded || !dmSansLoaded || !crimsonLoaded || !isSessionReady) {
     return (

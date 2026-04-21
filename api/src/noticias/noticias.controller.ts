@@ -155,7 +155,7 @@ export class NoticiasController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch(':id/publicar')
-    @Roles(Role.EDITOR, Role.SUPERADMIN)
+    @Roles(Role.AUTOR, Role.EDITOR, Role.SUPERADMIN)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Publicar noticia' })
     @ApiParam({ name: 'id', description: 'ID da noticia.' })
@@ -173,13 +173,16 @@ export class NoticiasController {
             },
         },
     })
-    publish(@Param('id') id: string) {
-        return this.noticiasService.publish(id);
+    publish(
+        @Param('id') id: string,
+        @CurrentUser() user: CurrentUserPayload,
+    ) {
+        return this.noticiasService.publish(id, user);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch(':id/despublicar')
-    @Roles(Role.EDITOR, Role.SUPERADMIN)
+    @Roles(Role.AUTOR, Role.EDITOR, Role.SUPERADMIN)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Despublicar noticia' })
     @ApiParam({ name: 'id', description: 'ID da noticia.' })
@@ -197,8 +200,11 @@ export class NoticiasController {
             },
         },
     })
-    unpublish(@Param('id') id: string) {
-        return this.noticiasService.unpublish(id);
+    unpublish(
+        @Param('id') id: string,
+        @CurrentUser() user: CurrentUserPayload,
+    ) {
+        return this.noticiasService.unpublish(id, user);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
