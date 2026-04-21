@@ -5,11 +5,20 @@ import {
     ForbiddenException,
     Get,
     Param,
+    Patch,
     Put,
+    UploadedFile,
     UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { existsSync, mkdirSync } from 'fs';
+import { extname, join } from 'path';
 import {
     ApiBearerAuth,
+    ApiBody,
+    ApiConsumes,
     ApiOperation,
     ApiParam,
     ApiResponse,
@@ -113,6 +122,56 @@ export class UsersController {
             throw new ForbiddenException('Acesso negado.');
         }
         return this.usersService.update(id, dto);
+    }
+
+    @Patch(':id/avatar')
+    @ApiOperation({ summary: 'Atualizar foto de perfil' })
+    @ApiParam({ name: 'id', description: 'ID do usuario.' })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            },
+        },
+    })
+    @UseInterceptors(
+        FileInterceptor('file', {
+            storage: diskStorage({
+                destination: (_req, _file, callback) => {
+                    const uploadDir = join(process.cwd(), 'uploads', 'avatars');
+                    if (!existsSync(uploadDir)) {
+                        mkdirSync(uploadDir, { recursive: true });
+                    }
+                    callback(null, uploadDir);
+                },
+                filename: (req, file, callback) => {
+                    const rawId = (req.params?.id ?? 'user') as string;
+                    const ext = extname(file.originalname) || '.jpg';
+                    callback(null, `${rawId}-${Date.now()}${ext}`);
+                },
+            }),
+        }),
+    )
+    updateAvatar(
+        @Param('id') id: string,
+        @UploadedFile() file: Express.Multer.File,
+        @CurrentUser() user: CurrentUserPayload,
+    ) {
+        if (user.role !== Role.SUPERADMIN && user.userId !== id) {
+            throw new ForbiddenException('Acesso negado.');
+        }
+
+        if (!file) {
+            return this.usersService.updateAvatar(id, null);
+        }
+
+        const avatarUrl = `/uploads/avatars/${file.filename}`;
+        return this.usersService.updateAvatar(id, avatarUrl);
     }
 
     @Delete(':id')

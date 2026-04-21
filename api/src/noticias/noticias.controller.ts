@@ -7,6 +7,7 @@ import {
     Patch,
     Post,
     Put,
+    Query,
     UseGuards,
 } from '@nestjs/common';
 import {
@@ -34,8 +35,14 @@ export class NoticiasController {
     @Get()
     @ApiOperation({ summary: 'Listar noticias publicadas' })
     @ApiResponse({ status: 200, description: 'Lista de noticias publicadas.' })
-    listPublished() {
-        return this.noticiasService.listPublished();
+    listPublished(
+        @Query('page') page?: string,
+        @Query('limit') limit?: string,
+    ) {
+        return this.noticiasService.listPublished({
+            page: page ? Number(page) : undefined,
+            limit: limit ? Number(limit) : undefined,
+        });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -46,8 +53,15 @@ export class NoticiasController {
     @ApiResponse({ status: 200, description: 'Lista de noticias do autor.' })
     @ApiResponse({ status: 401, description: 'Nao autenticado.' })
     @ApiResponse({ status: 403, description: 'Acesso negado.' })
-    listMine(@CurrentUser() user: CurrentUserPayload) {
-        return this.noticiasService.listMine(user.userId);
+    listMine(
+        @CurrentUser() user: CurrentUserPayload,
+        @Query('page') page?: string,
+        @Query('limit') limit?: string,
+    ) {
+        return this.noticiasService.listMine(user.userId, {
+            page: page ? Number(page) : undefined,
+            limit: limit ? Number(limit) : undefined,
+        });
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
@@ -58,8 +72,11 @@ export class NoticiasController {
     @ApiResponse({ status: 200, description: 'Lista de todas as noticias.' })
     @ApiResponse({ status: 401, description: 'Nao autenticado.' })
     @ApiResponse({ status: 403, description: 'Acesso negado.' })
-    listAll() {
-        return this.noticiasService.listAll();
+    listAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+        return this.noticiasService.listAll({
+            page: page ? Number(page) : undefined,
+            limit: limit ? Number(limit) : undefined,
+        });
     }
 
     @UseGuards(OptionalJwtAuthGuard)

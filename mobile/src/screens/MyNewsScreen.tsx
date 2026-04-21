@@ -35,6 +35,8 @@ type FormState = {
   imagem: string;
 };
 
+const PAGE_SIZE = 10;
+
 const emptyForm: FormState = {
   titulo: "",
   resumo: "",
@@ -70,6 +72,7 @@ export function MyNewsScreen({
 }: MyNewsScreenProps) {
   const [news, setNews] = useState<SuperadminNoticia[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -83,6 +86,8 @@ export function MyNewsScreen({
     id: string;
     titulo: string;
   } | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const token = session?.accessToken ?? "";
   const isAnyApiActionPending = isSaving || pendingActionId !== null;
@@ -110,30 +115,51 @@ export function MyNewsScreen({
     };
   }, [news]);
 
-  const loadNews = async () => {
+  const loadNews = async (nextPage = 1, mode: "replace" | "append" = "replace") => {
     if (!token) {
       setIsLoading(false);
       setError("Sessão inválida. Faça login novamente.");
       return;
     }
 
-    setIsLoading(true);
+    if (mode === "replace") {
+      setIsLoading(true);
+    } else {
+      setIsLoadingMore(true);
+    }
+
     setError(null);
     try {
-      const data = await listAllNoticias(token);
-      setNews(data);
+      const response = await listAllNoticias(token, {
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
+
+      setPage(response.meta.page);
+      setHasMore(response.meta.page < response.meta.totalPages);
+      setNews((prev) =>
+        mode === "append" ? [...prev, ...response.data] : response.data,
+      );
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Falha ao carregar notícias.",
       );
     } finally {
       setIsLoading(false);
+      setIsLoadingMore(false);
     }
   };
 
   useEffect(() => {
-    void loadNews();
+    void loadNews(1, "replace");
   }, [token]);
+
+  const handleLoadMore = () => {
+    if (!hasMore || isLoadingMore) {
+      return;
+    }
+    void loadNews(page + 1, "append");
+  };
 
   const upsertNewsItem = (next: SuperadminNoticia) => {
     setNews((prev) => {
@@ -194,7 +220,7 @@ export function MyNewsScreen({
         "Erro",
         err instanceof Error ? err.message : "Falha ao salvar notícia.",
       );
-      await loadNews();
+      await loadNews(1, "replace");
     } finally {
       setIsSaving(false);
     }
@@ -211,7 +237,7 @@ export function MyNewsScreen({
         "Erro",
         err instanceof Error ? err.message : "Falha ao excluir notícia.",
       );
-      await loadNews();
+      await loadNews(1, "replace");
     } finally {
       setPendingActionId(null);
       setPendingActionType(null);
@@ -247,7 +273,7 @@ export function MyNewsScreen({
         "Erro",
         err instanceof Error ? err.message : "Falha ao atualizar status.",
       );
-      await loadNews();
+      await loadNews(1, "replace");
     } finally {
       setPendingActionId(null);
       setPendingActionType(null);
@@ -469,7 +495,7 @@ export function MyNewsScreen({
                         style={[
                           styles.actionButton,
                           (isItemPending || isAnyApiActionPending) &&
-                            styles.disabledButton,
+                          styles.disabledButton,
                         ]}
                         onPress={() => handleTogglePublish(item)}
                         disabled={isItemPending || isAnyApiActionPending}
@@ -500,7 +526,7 @@ export function MyNewsScreen({
                         style={[
                           styles.deleteButton,
                           (isItemPending || isAnyApiActionPending) &&
-                            styles.disabledButton,
+                          styles.disabledButton,
                         ]}
                         onPress={() => handleDelete(item)}
                         disabled={isItemPending || isAnyApiActionPending}
@@ -518,6 +544,23 @@ export function MyNewsScreen({
                   </View>
                 );
               })}
+
+              {hasMore ? (
+                <Pressable
+                  style={[
+                    styles.loadMoreButton,
+                    isLoadingMore && styles.disabledButton,
+                  ]}
+                  onPress={handleLoadMore}
+                  disabled={isLoadingMore}
+                >
+                  {isLoadingMore ? (
+                    <ActivityIndicator size="small" color={colors.text} />
+                  ) : (
+                    <Text style={styles.loadMoreText}>Carregar mais</Text>
+                  )}
+                </Pressable>
+              ) : null}
             </View>
           )}
         </ScrollView>
@@ -577,8 +620,8 @@ export function MyNewsScreen({
                 disabled={isAnyApiActionPending}
               >
                 {deleteCandidate &&
-                pendingActionId === deleteCandidate.id &&
-                pendingActionType === "delete" ? (
+                  pendingActionId === deleteCandidate.id &&
+                  pendingActionType === "delete" ? (
                   <ActivityIndicator size="small" color={colors.surface} />
                 ) : (
                   <Text style={styles.modalConfirmText}>Excluir notícia</Text>
@@ -599,10 +642,10 @@ const styles = StyleSheet.create({
     width: "100%",
     ...(Platform.OS === "web"
       ? {
-          maxWidth: 375,
-          alignSelf: "center" as const,
-          height: "100%" as const,
-        }
+        maxWidth: 375,
+        alignSelf: "center" as const,
+        height: "100%" as const,
+      }
       : null),
   },
   header: {
@@ -833,6 +876,21 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_500Medium",
     fontSize: 12,
     color: "#A33C39",
+  },
+  loadMoreButton: {
+    marginTop: spacing.md,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.line,
+    paddingVertical: spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.surface,
+  },
+  loadMoreText: {
+    fontFamily: "DMSans_500Medium",
+    fontSize: 14,
+    color: colors.text,
   },
   modalOverlay: {
     flex: 1,

@@ -29,6 +29,8 @@ const searchCategories = [
   "Educação",
 ];
 
+const PAGE_SIZE = 10;
+
 type PublishedNoticia = {
   id: string;
   titulo: string;
@@ -36,6 +38,18 @@ type PublishedNoticia = {
   texto: string;
   imagem: string | null;
   autorId: string;
+};
+
+type PaginationMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
+type PaginatedResponse<T> = {
+  data: T[];
+  meta: PaginationMeta;
 };
 
 const categoryKeywords: Record<string, string[]> = {
@@ -66,27 +80,49 @@ export function SearchScreen({
   const [selectedCategory, setSelectedCategory] = useState("Todas");
   const [news, setNews] = useState<PublishedNoticia[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const loadPublishedNews = async (
+    nextPage = 1,
+    mode: "replace" | "append" = "replace",
+  ) => {
+    if (mode === "replace") {
+      setIsLoading(true);
+    } else {
+      setIsLoadingMore(true);
+    }
+
+    setError(null);
+    try {
+      const query = new URLSearchParams({
+        page: String(nextPage),
+        limit: String(PAGE_SIZE),
+      });
+      const response = await apiRequest<PaginatedResponse<PublishedNoticia>>(
+        `/noticias?${query.toString()}`,
+      );
+      setPage(response.meta.page);
+      setHasMore(response.meta.page < response.meta.totalPages);
+      setNews((prev) =>
+        mode === "append" ? [...prev, ...response.data] : response.data,
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Falha ao carregar notícias publicadas.",
+      );
+    } finally {
+      setIsLoading(false);
+      setIsLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
-    const loadPublishedNews = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const data = await apiRequest<PublishedNoticia[]>("/noticias");
-        setNews(data);
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Falha ao carregar notícias publicadas.",
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void loadPublishedNews();
+    void loadPublishedNews(1, "replace");
   }, []);
 
   const filteredNews = useMemo(() => {
@@ -113,6 +149,13 @@ export function SearchScreen({
       return keywords.some((keyword) => searchable.includes(keyword));
     });
   }, [news, query, selectedCategory]);
+
+  const handleLoadMore = () => {
+    if (!hasMore || isLoadingMore) {
+      return;
+    }
+    void loadPublishedNews(page + 1, "append");
+  };
 
   return (
     <View style={styles.screen}>
@@ -190,6 +233,23 @@ export function SearchScreen({
                   </View>
                 ))}
               </View>
+
+              {hasMore ? (
+                <Pressable
+                  style={[
+                    styles.loadMoreButton,
+                    isLoadingMore && styles.disabledButton,
+                  ]}
+                  onPress={handleLoadMore}
+                  disabled={isLoadingMore}
+                >
+                  {isLoadingMore ? (
+                    <ActivityIndicator size="small" color={colors.text} />
+                  ) : (
+                    <Text style={styles.loadMoreText}>Carregar mais</Text>
+                  )}
+                </Pressable>
+              ) : null}
             </View>
           )}
         </ScrollView>
@@ -213,10 +273,10 @@ const styles = StyleSheet.create({
     width: "100%",
     ...(Platform.OS === "web"
       ? {
-          maxWidth: 375,
-          alignSelf: "center" as const,
-          height: "100%" as const,
-        }
+        maxWidth: 375,
+        alignSelf: "center" as const,
+        height: "100%" as const,
+      }
       : null),
   },
   scrollArea: {
@@ -346,5 +406,23 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  loadMoreButton: {
+    marginTop: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.line,
+    paddingVertical: spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.surface,
+  },
+  loadMoreText: {
+    fontFamily: "DMSans_500Medium",
+    fontSize: 14,
+    color: colors.text,
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
 });

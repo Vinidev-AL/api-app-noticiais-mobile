@@ -6,7 +6,7 @@ import { Inject } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import * as bcrypt from 'bcryptjs';
 import { DB } from '../db/db.module';
-import { users } from '../db/schema';
+import { perfis, users } from '../db/schema';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -18,8 +18,10 @@ export class UsersService {
             id: users.id,
             nome: users.nome,
             username: users.username,
+            avatarUrl: users.avatarUrl,
             perfilId: users.perfilId,
-        }).from(users).all();
+            role: perfis.descricao,
+        }).from(users).leftJoin(perfis, eq(perfis.id, users.perfilId)).all();
     }
 
     findById(id: string) {
@@ -28,9 +30,12 @@ export class UsersService {
                 id: users.id,
                 nome: users.nome,
                 username: users.username,
+                avatarUrl: users.avatarUrl,
                 perfilId: users.perfilId,
+                role: perfis.descricao,
             })
             .from(users)
+            .leftJoin(perfis, eq(perfis.id, users.perfilId))
             .where(eq(users.id, id))
             .get();
 
@@ -66,6 +71,21 @@ export class UsersService {
         }
 
         this.db.update(users).set(updateData).where(eq(users.id, id)).run();
+        return this.findById(id);
+    }
+
+    updateAvatar(id: string, avatarUrl: string | null) {
+        const existing = this.db
+            .select({ id: users.id })
+            .from(users)
+            .where(eq(users.id, id))
+            .get();
+
+        if (!existing) {
+            throw new NotFoundException('Usuario nao encontrado.');
+        }
+
+        this.db.update(users).set({ avatarUrl }).where(eq(users.id, id)).run();
         return this.findById(id);
     }
 

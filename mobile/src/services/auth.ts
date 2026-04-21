@@ -19,3 +19,21 @@ export function signup(payload: SignupPayload) {
     body: payload,
   });
 }
+
+export function requestPasswordReset(username: string) {
+  return apiRequest<{ message: string; codigo: string }>("/auth/lembrar-senha", {
+    method: "POST",
+    body: { username },
+  });
+}
+
+export function resetPassword(payload: {
+  username: string;
+  codigo: string;
+  novaSenha: string;
+}) {
+  return apiRequest<{ reset: boolean }>("/auth/redefinir-senha", {
+    method: "POST",
+    body: payload,
+  });
+}

@@ -1,6 +1,8 @@
 import { Feather } from "@expo/vector-icons";
 import {
   ActivityIndicator,
+  Image,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -11,14 +13,18 @@ import {
 } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { AppTab, BottomTabBar, TabConfig } from "../components/BottomTabBar";
-import { login, signup } from "../services/auth";
+import { login, requestPasswordReset, resetPassword, signup } from "../services/auth";
+import { uploadAvatar } from "../services/users";
+import { API_BASE_URL } from "../services/api";
 import { AuthSession, AuthUser } from "../types/auth";
 import { colors, radius, spacing } from "../theme/tokens";
+import * as ImagePicker from "expo-image-picker";
 
 type ProfileScreenProps = {
   activeTab: AppTab;
   onTabPress: (tab: AppTab) => void;
   onLoginSuccess: (session: AuthSession) => void;
+  onSessionUpdate: (session: AuthSession) => void;
   session: AuthSession | null;
   onLogout: () => void;
   tabs: TabConfig[];
@@ -28,17 +34,31 @@ export function ProfileScreen({
   activeTab,
   onTabPress,
   onLoginSuccess,
+  onSessionUpdate,
   session,
   onLogout,
   tabs,
 }: ProfileScreenProps) {
+  const resolveAvatarUrl = (avatarUrl?: string | null) => {
+    if (!avatarUrl) {
+      return null;
+    }
+    return avatarUrl.startsWith("http") ? avatarUrl : `${API_BASE_URL}${avatarUrl}`;
+  };
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isAvatarLoading, setIsAvatarLoading] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
     type: "error" | "success";
   } | null>(null);
+  const [isResetOpen, setIsResetOpen] = useState(false);
+  const [resetUsername, setResetUsername] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [resetPasswordValue, setResetPasswordValue] = useState("");
+  const [resetHint, setResetHint] = useState<string | null>(null);
+  const [isResetLoading, setIsResetLoading] = useState(false);
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -135,15 +155,138 @@ export function ProfileScreen({
     }
   };
 
+  const handleRequestReset = async () => {
+    if (!resetUsername.trim()) {
+      showToast("Informe o username para recuperar a senha.", "error");
+      return;
+    }
+
+    setIsResetLoading(true);
+    try {
+      const data = await requestPasswordReset(resetUsername.trim());
+      setResetHint(`Codigo fixo: ${data.codigo}`);
+      showToast("Codigo de recuperacao gerado.", "success");
+    } catch (error) {
+      showToast(
+        error instanceof Error
+          ? error.message
+          : "Nao foi possivel gerar o codigo.",
+        "error",
+      );
+    } finally {
+      setIsResetLoading(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!resetUsername.trim() || !resetCode.trim() || !resetPasswordValue) {
+      showToast("Preencha username, codigo e nova senha.", "error");
+      return;
+    }
+
+    if (resetPasswordValue.trim().length < 6) {
+      showToast("A nova senha precisa ter no minimo 6 caracteres.", "error");
+      return;
+    }
+
+    setIsResetLoading(true);
+    try {
+      await resetPassword({
+        username: resetUsername.trim(),
+        codigo: resetCode.trim(),
+        novaSenha: resetPasswordValue,
+      });
+      showToast("Senha redefinida com sucesso.", "success");
+      setIsResetOpen(false);
+      setResetHint(null);
+      setResetUsername("");
+      setResetCode("");
+      setResetPasswordValue("");
+    } catch (error) {
+      showToast(
+        error instanceof Error
+          ? error.message
+          : "Nao foi possivel redefinir a senha.",
+        "error",
+      );
+    } finally {
+      setIsResetLoading(false);
+    }
+  };
+
+  const handlePickAvatar = async () => {
+    if (!session?.accessToken) {
+      showToast("Sessao invalida. Faça login novamente.", "error");
+      return;
+    }
+
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      showToast("Permissao de galeria negada.", "error");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (result.canceled || !result.assets[0]?.uri) {
+      return;
+    }
+
+    setIsAvatarLoading(true);
+    try {
+      const updated = await uploadAvatar(
+        session.accessToken,
+        session.user.id,
+        result.assets[0].uri,
+      );
+      onSessionUpdate({
+        ...session,
+        user: { ...session.user, avatarUrl: updated.avatarUrl ?? null },
+      });
+      showToast("Foto de perfil atualizada.", "success");
+    } catch (error) {
+      showToast(
+        error instanceof Error
+          ? error.message
+          : "Nao foi possivel enviar a foto.",
+        "error",
+      );
+    } finally {
+      setIsAvatarLoading(false);
+    }
+  };
+
   const renderLoggedState = (user: AuthUser) => (
     <View style={styles.loggedContainer}>
       <View style={styles.userBadge}>
-        <Feather name="user" size={24} color={colors.surface} />
+        {resolveAvatarUrl(user.avatarUrl) ? (
+          <Image
+            source={{ uri: resolveAvatarUrl(user.avatarUrl) ?? "" }}
+            style={styles.avatarImage}
+          />
+        ) : (
+          <Feather name="user" size={24} color={colors.surface} />
+        )}
       </View>
       <Text style={styles.loggedTitle}>Sessão ativa</Text>
       <Text style={styles.loggedName}>{user.nome}</Text>
       <Text style={styles.loggedMeta}>@{user.username}</Text>
       <Text style={styles.loggedMeta}>Perfil: {user.role}</Text>
+
+      <Pressable
+        style={[styles.secondaryAction, isAvatarLoading && styles.disabledButton]}
+        onPress={handlePickAvatar}
+        disabled={isAvatarLoading}
+      >
+        <Text style={styles.secondaryActionText}>
+          {isAvatarLoading ? "Enviando foto..." : "Atualizar foto de perfil"}
+        </Text>
+      </Pressable>
 
       <Pressable
         style={styles.primaryAction}
@@ -256,21 +399,102 @@ export function ProfileScreen({
                     Não tem conta? Cadastre-se
                   </Text>
                 </Pressable>
+
+                <Pressable
+                  style={styles.resetButton}
+                  onPress={() => setIsResetOpen(true)}
+                >
+                  <Text style={styles.resetButtonText}>Esqueci minha senha</Text>
+                </Pressable>
               </View>
 
               <View style={styles.demoBox}>
                 <Text style={styles.demoTitle}>
                   Demo - use um destes usuários:
                 </Text>
-                <Text style={styles.demoItem}>• admin - SuperAdmin</Text>
-                <Text style={styles.demoItem}>• editor - Editor</Text>
-                <Text style={styles.demoItem}>• autor - Autor</Text>
-                <Text style={styles.demoItem}>• leitor - Leitor</Text>
+                <Text style={styles.demoItem}>• admin / 123456 (SuperAdmin)</Text>
+                <Text style={styles.demoItem}>• editor / 123456 (Editor)</Text>
+                <Text style={styles.demoItem}>• autor / 123456 (Autor)</Text>
+                <Text style={styles.demoItem}>• leitor / 123456 (Leitor)</Text>
               </View>
             </>
           )}
         </ScrollView>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent
+        visible={isResetOpen}
+        onRequestClose={() => setIsResetOpen(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Recuperar senha</Text>
+            <Text style={styles.modalSubtitle}>
+              O codigo e fixo e sera exibido aqui para simulacao.
+            </Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="username"
+              placeholderTextColor={colors.textMuted}
+              value={resetUsername}
+              onChangeText={setResetUsername}
+              autoCapitalize="none"
+            />
+
+            <Pressable
+              style={[styles.loginButton, isResetLoading && styles.disabledButton]}
+              onPress={handleRequestReset}
+              disabled={isResetLoading}
+            >
+              {isResetLoading ? (
+                <ActivityIndicator size="small" color={colors.surface} />
+              ) : (
+                <Text style={styles.loginButtonText}>Gerar codigo</Text>
+              )}
+            </Pressable>
+
+            {resetHint ? (
+              <Text style={styles.resetHint}>{resetHint}</Text>
+            ) : null}
+
+            <TextInput
+              style={styles.input}
+              placeholder="codigo"
+              placeholderTextColor={colors.textMuted}
+              value={resetCode}
+              onChangeText={setResetCode}
+              autoCapitalize="none"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="nova senha"
+              placeholderTextColor={colors.textMuted}
+              secureTextEntry
+              value={resetPasswordValue}
+              onChangeText={setResetPasswordValue}
+            />
+
+            <View style={styles.modalActions}>
+              <Pressable
+                style={[styles.primaryAction, isResetLoading && styles.disabledButton]}
+                onPress={handleResetPassword}
+                disabled={isResetLoading}
+              >
+                <Text style={styles.primaryActionText}>Redefinir</Text>
+              </Pressable>
+              <Pressable
+                style={styles.secondaryAction}
+                onPress={() => setIsResetOpen(false)}
+              >
+                <Text style={styles.secondaryActionText}>Fechar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <View style={styles.tabBarWrapper}>
         <BottomTabBar
@@ -290,10 +514,10 @@ const styles = StyleSheet.create({
     width: "100%",
     ...(Platform.OS === "web"
       ? {
-          maxWidth: 375,
-          alignSelf: "center" as const,
-          height: "100%" as const,
-        }
+        maxWidth: 375,
+        alignSelf: "center" as const,
+        height: "100%" as const,
+      }
       : null),
   },
   header: {
@@ -399,6 +623,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  resetButton: {
+    marginTop: spacing.md,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  resetButtonText: {
+    fontFamily: "DMSans_500Medium",
+    fontSize: 14,
+    color: colors.textMuted,
+  },
+  avatarImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
   signupButtonText: {
     fontFamily: "DMSans_400Regular",
     fontSize: 14,
@@ -447,6 +686,36 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans_400Regular",
     fontSize: 12,
     color: colors.text,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    paddingHorizontal: spacing.lg,
+  },
+  modalCard: {
+    borderRadius: radius.lg,
+    backgroundColor: colors.surface,
+    padding: spacing.lg,
+    gap: spacing.md,
+  },
+  modalTitle: {
+    fontFamily: "CrimsonPro_600SemiBold",
+    fontSize: 20,
+    color: colors.text,
+  },
+  modalSubtitle: {
+    fontFamily: "DMSans_400Regular",
+    fontSize: 13,
+    color: colors.textMuted,
+  },
+  resetHint: {
+    fontFamily: "DMSans_500Medium",
+    fontSize: 14,
+    color: colors.text,
+  },
+  modalActions: {
+    gap: spacing.sm,
   },
   loggedContainer: {
     alignItems: "center",

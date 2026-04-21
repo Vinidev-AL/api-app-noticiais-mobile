@@ -28,6 +28,9 @@ Este README resume o que já está funcionando no app mobile (Expo + React Nativ
 - Persistência de sessão com AsyncStorage/localStorage.
 - Restauração automática da sessão ao abrir o app.
 - Logout funcional com limpeza de sessão.
+- Recuperação de senha com código fixo (simulado):
+  - POST /api/auth/lembrar-senha
+  - POST /api/auth/redefinir-senha
 
 ### 3) Regras de acesso por perfil
 
@@ -66,6 +69,9 @@ Este README resume o que já está funcionando no app mobile (Expo + React Nativ
   - sucesso de login
   - sucesso de cadastro
   - erros de validação/requisição
+- Recuperação de senha com modal e código fixo exibido na tela.
+- Código fixo padrão: 123456.
+- Upload de foto de perfil com crop (expo-image-picker) enviando para a API.
 
 ### 7) Área SuperAdmin - Dashboard (aba Admin)
 
@@ -92,6 +98,7 @@ Este README resume o que já está funcionando no app mobile (Expo + React Nativ
 - Excluir notícia (DELETE /api/noticias/:id).
 - Formulário com validação mínima de campos obrigatórios.
 - Feedback de erro com mensagens da API.
+- Paginação de resultados (API + app) com botão "Carregar mais".
 
 ### 9) Camada de API no mobile
 
@@ -102,6 +109,15 @@ Este README resume o que já está funcionando no app mobile (Expo + React Nativ
 - Suporte a EXPO_PUBLIC_API_URL para sobrescrever endpoint.
 - Envio automático de Authorization Bearer token quando sessão existe.
 - Tratamento padronizado de erros de rede e resposta da API.
+- Upload multipart para foto de perfil com token.
+
+## Banco de dados (atualização de coluna)
+
+Se você já possui o arquivo `data/app.db`, execute a atualização abaixo para suportar a foto de perfil:
+
+```bash
+sqlite3 data/app.db "ALTER TABLE users ADD COLUMN avatar_url text;"
+```
 
 ## Pré-requisitos para o mobile funcionar
 
@@ -109,6 +125,7 @@ Este README resume o que já está funcionando no app mobile (Expo + React Nativ
 
 - API Nest precisa estar rodando na porta 3000.
 - CORS habilitado para chamadas do frontend.
+- Ao iniciar, a API cria automaticamente os usuários padrão (admin/editor/autor/leitor) se não existirem.
 
 ### Frontend mobile
 
@@ -138,3 +155,5 @@ npm --prefix mobile run web
 - editor / 123456 (EDITOR)
 - autor / 123456 (AUTOR)
 - leitor / 123456 (LEITOR)
+
+Obs: essas credenciais aparecem na tela de login do app para facilitar o teste.

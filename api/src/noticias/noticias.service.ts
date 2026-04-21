@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { DB } from '../db/db.module';
 import { noticiaTags, noticias, tags } from '../db/schema';
@@ -16,7 +16,20 @@ import { CurrentUserPayload } from '../common/current-user.decorator';
 
 @Injectable()
 export class NoticiasService {
-  constructor(@Inject(DB) private readonly db: any) {}
+  constructor(@Inject(DB) private readonly db: any) { }
+
+  private normalizePagination(page?: number, limit?: number) {
+    const safeLimit = Number.isFinite(limit) ? Number(limit) : 10;
+    const safePage = Number.isFinite(page) ? Number(page) : 1;
+    const normalizedLimit = Math.min(Math.max(safeLimit, 1), 50);
+    const normalizedPage = Math.max(safePage, 1);
+
+    return {
+      page: normalizedPage,
+      limit: normalizedLimit,
+      offset: (normalizedPage - 1) * normalizedLimit,
+    };
+  }
 
   private findByIdOrThrow(id: string) {
     const noticia = this.db
@@ -31,30 +44,110 @@ export class NoticiasService {
     return noticia;
   }
 
-  listPublished() {
-    return this.db
+  listPublished(pagination?: { page?: number; limit?: number }) {
+    const { page, limit, offset } = this.normalizePagination(
+      pagination?.page,
+      pagination?.limit,
+    );
+
+    const total =
+      this.db
+        .select({ count: sql<number>`count(*)` })
+        .from(noticias)
+        .where(eq(noticias.status, NoticiaStatus.PUBLICADO))
+        .get()?.count ?? 0;
+
+    const data = this.db
       .select()
       .from(noticias)
       .where(eq(noticias.status, NoticiaStatus.PUBLICADO))
       .orderBy(desc(noticias.dataPublicacao))
+      .limit(limit)
+      .offset(offset)
       .all();
+
+    return {
+      data,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
-  listMine(userId: string) {
-    return this.db
+  listMine(userId: string, pagination?: { page?: number; limit?: number }) {
+    const { page, limit, offset } = this.normalizePagination(
+      pagination?.page,
+      pagination?.limit,
+    );
+
+    const total =
+      this.db
+        .select({ count: sql<number>`count(*)` })
+        .from(noticias)
+        .where(eq(noticias.autorId, userId))
+        .get()?.count ?? 0;
+
+    const data = this.db
       .select()
       .from(noticias)
       .where(eq(noticias.autorId, userId))
       .orderBy(desc(noticias.dataCriacao))
+      .limit(limit)
+      .offset(offset)
       .all();
+
+    return {
+      data,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
-  listAll() {
-    return this.db
+  listAll(pagination?: { page?: number; limit?: number }) {
+    const { page, limit, offset } = this.normalizePagination(
+      pagination?.page,
+      pagination?.limit,
+    );
+
+    const total =
+      this.db
+        .select({ count: sql<number>`count(*)` })
+        .from(noticias)
+        .get()?.count ?? 0;
+
+    const totalPublicadas =
+      this.db
+        .select({ count: sql<number>`count(*)` })
+        .from(noticias)
+        .where(eq(noticias.status, NoticiaStatus.PUBLICADO))
+        .get()?.count ?? 0;
+
+    const data = this.db
       .select()
       .from(noticias)
       .orderBy(desc(noticias.dataCriacao))
+      .limit(limit)
+      .offset(offset)
       .all();
+
+    return {
+      data,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        totalPublicadas,
+        totalRascunhos: total - totalPublicadas,
+      },
+    };
   }
 
   getById(id: string, user?: CurrentUserPayload) {

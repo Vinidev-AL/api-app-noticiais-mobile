@@ -14,6 +14,8 @@ import { perfis, users } from '../db/schema';
 import { Role } from '../common/roles.enum';
 import { CadastroDto } from './dto/cadastro.dto';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +24,10 @@ export class AuthService {
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService,
     ) { }
+
+    private getResetCode() {
+        return this.configService.get<string>('RESET_CODE') ?? '123456';
+    }
 
     async cadastro(dto: CadastroDto) {
         await this.ensurePerfis();
@@ -61,6 +67,7 @@ export class AuthService {
             id: userId,
             nome: dto.nome,
             username: dto.username,
+            avatarUrl: null,
             role: perfil.descricao,
         };
     }
@@ -72,6 +79,7 @@ export class AuthService {
                 nome: users.nome,
                 username: users.username,
                 password: users.password,
+                avatarUrl: users.avatarUrl,
                 role: perfis.descricao,
             })
             .from(users)
@@ -97,6 +105,7 @@ export class AuthService {
                 id: user.id,
                 nome: user.nome,
                 username: user.username,
+                avatarUrl: user.avatarUrl,
                 role: user.role,
             },
         };
@@ -152,5 +161,83 @@ export class AuthService {
             password: passwordHash,
             perfilId: perfil.id,
         }).run();
+    }
+
+    async seedDefaultUsersIfNeeded() {
+        await this.ensurePerfis();
+
+        const defaults = [
+            { username: 'admin', nome: 'Admin', role: Role.SUPERADMIN },
+            { username: 'editor', nome: 'Editor', role: Role.EDITOR },
+            { username: 'autor', nome: 'Autor', role: Role.AUTOR },
+            { username: 'leitor', nome: 'Leitor', role: Role.LEITOR },
+        ];
+
+        for (const item of defaults) {
+            const perfil = this.db
+                .select()
+                .from(perfis)
+                .where(eq(perfis.descricao, item.role))
+                .get();
+
+            if (!perfil) {
+                continue;
+            }
+
+            const passwordHash = await bcrypt.hash('123456', 10);
+            this.db
+                .insert(users)
+                .values({
+                    id: randomUUID(),
+                    nome: item.nome,
+                    username: item.username,
+                    password: passwordHash,
+                    perfilId: perfil.id,
+                })
+                .onConflictDoNothing()
+                .run();
+        }
+    }
+
+    requestPasswordReset(dto: ForgotPasswordDto) {
+        const user = this.db
+            .select({ id: users.id })
+            .from(users)
+            .where(eq(users.username, dto.username))
+            .get();
+
+        if (!user) {
+            throw new UnauthorizedException('Usuario nao encontrado.');
+        }
+
+        return {
+            message: 'Codigo de recuperacao gerado com sucesso.',
+            codigo: this.getResetCode(),
+        };
+    }
+
+    async resetPassword(dto: ResetPasswordDto) {
+        if (dto.codigo !== this.getResetCode()) {
+            throw new UnauthorizedException('Codigo invalido.');
+        }
+
+        const user = this.db
+            .select({ id: users.id })
+            .from(users)
+            .where(eq(users.username, dto.username))
+            .get();
+
+        if (!user) {
+            throw new UnauthorizedException('Usuario nao encontrado.');
+        }
+
+        const passwordHash = await bcrypt.hash(dto.novaSenha, 10);
+        this.db
+            .update(users)
+            .set({ password: passwordHash })
+            .where(eq(users.id, user.id))
+            .run();
+
+        return { reset: true };
     }
 }

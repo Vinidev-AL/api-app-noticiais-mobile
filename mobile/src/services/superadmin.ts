@@ -29,8 +29,37 @@ export type AdminStats = {
   totalTags: number;
 };
 
-export async function listAllNoticias(token: string) {
-  return apiRequest<SuperadminNoticia[]>("/noticias/todas", { token });
+type PaginationMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  totalPublicadas?: number;
+  totalRascunhos?: number;
+};
+
+type PaginatedResponse<T> = {
+  data: T[];
+  meta: PaginationMeta;
+};
+
+export async function listAllNoticias(
+  token: string,
+  params?: { page?: number; limit?: number },
+) {
+  const query = new URLSearchParams();
+  if (params?.page) {
+    query.set("page", String(params.page));
+  }
+  if (params?.limit) {
+    query.set("limit", String(params.limit));
+  }
+
+  const path = query.toString()
+    ? `/noticias/todas?${query.toString()}`
+    : "/noticias/todas";
+
+  return apiRequest<PaginatedResponse<SuperadminNoticia>>(path, { token });
 }
 
 export async function createNoticia(token: string, payload: NoticiaPayload) {
@@ -75,21 +104,17 @@ export async function unpublishNoticia(token: string, id: string) {
 }
 
 export async function loadAdminStats(token: string): Promise<AdminStats> {
-  const [users, noticias, tags] = await Promise.all([
+  const [users, noticiasPage, tags] = await Promise.all([
     apiRequest<Array<{ id: string }>>("/users", { token }),
-    listAllNoticias(token),
+    listAllNoticias(token, { page: 1, limit: 1 }),
     apiRequest<Array<{ id: string }>>("/tags", { token }),
   ]);
 
-  const totalPublicadas = noticias.filter(
-    (item) => item.status === "PUBLICADO",
-  ).length;
-
   return {
     totalUsuarios: users.length,
-    totalNoticias: noticias.length,
-    totalPublicadas,
-    totalRascunhos: noticias.length - totalPublicadas,
+    totalNoticias: noticiasPage.meta.total,
+    totalPublicadas: noticiasPage.meta.totalPublicadas ?? 0,
+    totalRascunhos: noticiasPage.meta.totalRascunhos ?? 0,
     totalTags: tags.length,
   };
 }

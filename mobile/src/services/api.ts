@@ -58,3 +58,43 @@ export async function apiRequest<T>(
 
   return data as T;
 }
+
+type UploadOptions = {
+  method?: "POST" | "PATCH" | "PUT";
+  token?: string;
+  body: FormData;
+};
+
+export async function uploadRequest<T>(
+  path: string,
+  options: UploadOptions,
+): Promise<T> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method: options.method ?? "POST",
+      headers: {
+        ...(options.token
+          ? { Authorization: `Bearer ${options.token}` }
+          : null),
+      },
+      body: options.body,
+    });
+  } catch {
+    throw new Error(
+      `Falha de conexao com a API (${API_BASE_URL}). Verifique se a API esta rodando em /api na porta 3000 ou configure EXPO_PUBLIC_API_URL.`,
+    );
+  }
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const message =
+      (typeof data?.message === "string" && data.message) ||
+      (Array.isArray(data?.message) && data.message.join("; ")) ||
+      "Falha na requisicao";
+    throw new Error(message);
+  }
+
+  return data as T;
+}

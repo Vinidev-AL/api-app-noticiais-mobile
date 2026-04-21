@@ -2,12 +2,12 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useFonts as useExpoFonts } from "expo-font";
 import {
   CrimsonPro_600SemiBold,
@@ -93,6 +93,11 @@ export default function App() {
     await storeSession(nextSession);
   };
 
+  const handleSessionUpdate = async (nextSession: AuthSession) => {
+    setSession(nextSession);
+    await storeSession(nextSession);
+  };
+
   const handleLogout = async () => {
     setSession(null);
     await clearStoredSession();
@@ -129,52 +134,55 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView style={styles.appRoot}>
-      {appToast ? (
-        <View style={styles.appToast}>
-          <Feather name="check-circle" size={16} color={colors.surface} />
-          <Text style={styles.appToastText}>{appToast}</Text>
-        </View>
-      ) : null}
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.appRoot} edges={["top", "left", "right"]}>
+        {appToast ? (
+          <View style={styles.appToast}>
+            <Feather name="check-circle" size={16} color={colors.surface} />
+            <Text style={styles.appToastText}>{appToast}</Text>
+          </View>
+        ) : null}
 
-      {activeTab === "search" ? (
-        <SearchScreen
-          activeTab={activeTab}
-          onTabPress={handleTabPress}
-          tabs={visibleTabs}
-        />
-      ) : activeTab === "create" ? (
-        <MyNewsScreen
-          activeTab={activeTab}
-          onTabPress={handleTabPress}
-          tabs={visibleTabs}
-          session={session}
-        />
-      ) : activeTab === "admin" ? (
-        <AdminScreen
-          activeTab={activeTab}
-          onTabPress={handleTabPress}
-          tabs={visibleTabs}
-          session={session}
-        />
-      ) : activeTab === "profile" ? (
-        <ProfileScreen
-          activeTab={activeTab}
-          onTabPress={handleTabPress}
-          onLoginSuccess={handleLoginSuccess}
-          session={session}
-          onLogout={handleLogout}
-          tabs={visibleTabs}
-        />
-      ) : (
-        <HomeScreen
-          activeTab={activeTab}
-          onTabPress={handleTabPress}
-          tabs={visibleTabs}
-        />
-      )}
-      <StatusBar style="dark" />
-    </SafeAreaView>
+        {activeTab === "search" ? (
+          <SearchScreen
+            activeTab={activeTab}
+            onTabPress={handleTabPress}
+            tabs={visibleTabs}
+          />
+        ) : activeTab === "create" ? (
+          <MyNewsScreen
+            activeTab={activeTab}
+            onTabPress={handleTabPress}
+            tabs={visibleTabs}
+            session={session}
+          />
+        ) : activeTab === "admin" ? (
+          <AdminScreen
+            activeTab={activeTab}
+            onTabPress={handleTabPress}
+            tabs={visibleTabs}
+            session={session}
+          />
+        ) : activeTab === "profile" ? (
+          <ProfileScreen
+            activeTab={activeTab}
+            onTabPress={handleTabPress}
+            onLoginSuccess={handleLoginSuccess}
+            onSessionUpdate={handleSessionUpdate}
+            session={session}
+            onLogout={handleLogout}
+            tabs={visibleTabs}
+          />
+        ) : (
+          <HomeScreen
+            activeTab={activeTab}
+            onTabPress={handleTabPress}
+            tabs={visibleTabs}
+          />
+        )}
+        <StatusBar style="dark" />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

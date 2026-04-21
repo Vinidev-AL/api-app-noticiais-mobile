@@ -1,5 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, spacing } from "../theme/tokens";
 
 export type AppTab = "home" | "search" | "create" | "admin" | "profile";
@@ -56,8 +57,10 @@ export function BottomTabBar({
   onTabPress,
   tabs = DEFAULT_TABS,
 }: BottomTabBarProps) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: spacing.lg + insets.bottom }]}>
       {tabs.map((config) => (
         <TabItem
           key={config.tab}

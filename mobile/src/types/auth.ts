@@ -2,6 +2,7 @@ export type AuthUser = {
   id: string;
   nome: string;
   username: string;
+  avatarUrl?: string | null;
   role: string;
 };
 

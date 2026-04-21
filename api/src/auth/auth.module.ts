@@ -28,5 +28,6 @@ export class AuthModule implements OnModuleInit {
 
     async onModuleInit() {
         await this.authService.seedSuperadminIfNeeded();
+        await this.authService.seedDefaultUsersIfNeeded();
     }
 }

@@ -21,6 +21,7 @@ export const users = sqliteTable(
         nome: text('nome').notNull(),
         username: text('username').notNull(),
         password: text('password').notNull(),
+        avatarUrl: text('avatar_url'),
         perfilId: text('perfil_id')
             .notNull()
             .references(() => perfis.id, { onDelete: 'restrict' }),
